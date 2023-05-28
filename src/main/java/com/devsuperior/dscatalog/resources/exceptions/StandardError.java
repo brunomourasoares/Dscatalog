@@ -1,5 +1,6 @@
 package com.devsuperior.dscatalog.resources.exceptions;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 import lombok.AllArgsConstructor;
@@ -9,7 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class StandardError {
+public class StandardError implements Serializable {
+    private static final long serialVersionUID = 1L;
     
     private Instant timestamp;
     private Integer status;
