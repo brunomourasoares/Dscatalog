@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,14 @@ public class CategoryService {
     public CategoryDTO findById(Long id) {
         Optional<Category> obj = categoryRepository.findById(id);
         Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+        return new CategoryDTO(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public CategoryDTO insert(CategoryDTO dto) {
+        Category entity = new Category();
+        BeanUtils.copyProperties(dto, entity);
+        categoryRepository.save(entity);
         return new CategoryDTO(entity);
     }
 }
