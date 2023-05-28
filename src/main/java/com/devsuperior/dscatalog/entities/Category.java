@@ -11,12 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -34,10 +32,15 @@ public class Category implements Serializable {
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
 
-	//@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	//private Instant updatedAt;
+	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+	private Instant updatedAt;
 
     public Category() {
+    }
+
+    public Category(Long id, String name, Instant createdAt) {
+        this.id = id;
+        this.name = name;
     }
 
     @PrePersist
@@ -45,8 +48,8 @@ public class Category implements Serializable {
 		createdAt = Instant.now();
 	}
 	
-	//@PreUpdate
-	//public void preUpdate() {
-	//	updatedAt = Instant.now();
-	//}
+	@PreUpdate
+	public void preUpdate() {
+		updatedAt = Instant.now();
+	}
 }
