@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.devsuperior.dscatalog.dtos.CategoryDTO;
+import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.services.CategoryService;
+import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @RestController
 @RequestMapping(value = "/categories")
@@ -61,7 +63,10 @@ public class CategoryResource {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        if (!categoryService.LocateById(id)) {
+            throw new ResourceNotFoundException("Id " + id + " not found!");
+        }
         categoryService.delete(id);
         return ResponseEntity.noContent().build();
     }

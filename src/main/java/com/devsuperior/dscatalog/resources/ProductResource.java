@@ -20,13 +20,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.devsuperior.dscatalog.dtos.ProductDTO;
 import com.devsuperior.dscatalog.services.ProductService;
+import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @RestController
 @RequestMapping(value = "/products")
 public class ProductResource {
     
     @Autowired
-    private ProductService categoryService;
+    private ProductService productService;
 
     @GetMapping
     public ResponseEntity<Page<ProductDTO>> findAll(
@@ -36,19 +37,19 @@ public class ProductResource {
         @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
         
-        Page<ProductDTO> list = categoryService.findAllPaged(pageRequest);
+        Page<ProductDTO> list = productService.findAllPaged(pageRequest);
         return ResponseEntity.ok().body(list);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
-        ProductDTO dto = categoryService.findById(id);
+        ProductDTO dto = productService.findById(id);
         return ResponseEntity.ok().body(dto);
     }
 
     @PostMapping
     public ResponseEntity<ProductDTO> insertProduct(@RequestBody ProductDTO dto) {
-        dto = categoryService.insert(dto);
+        dto = productService.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}").buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
@@ -56,13 +57,16 @@ public class ProductResource {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO dto) {
-        dto = categoryService.update(id, dto);
+        dto = productService.update(id, dto);
         return ResponseEntity.ok().body(dto);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long id) {
-        categoryService.delete(id);
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        if (!productService.LocateById(id)) {
+            throw new ResourceNotFoundException("Id " + id + " not found!");
+        }
+        productService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

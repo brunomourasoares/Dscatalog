@@ -40,7 +40,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
         Optional<Product> obj = productRepository.findById(id);
-        Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
+        Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("ID " + id + " not found!"));
         return new ProductDTO(entity, entity.getCategories());
     }
 
@@ -61,16 +61,13 @@ public class ProductService {
             return new ProductDTO(entity);
         }
         catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException("ID not found " + id);
+            throw new ResourceNotFoundException("ID " + id + " not found!");
         }
     }
 
     public void delete(Long id) {
         try {
             productRepository.deleteById(id);
-        }
-        catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException("Id not found " + id);
         }
         catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Integrity violation");
@@ -88,6 +85,15 @@ public class ProductService {
         for (CategoryDTO catDto : dto.getCategories()) {
             Category category = categoryRepository.getReferenceById(catDto.getId());
             entity.getCategories().add(category);
+        }
+    }
+
+    public boolean LocateById(Long id) {
+        if (!productRepository.existsById(id)) {
+            return false;
+        }
+        else {
+            return true;
         }
     }
 }
