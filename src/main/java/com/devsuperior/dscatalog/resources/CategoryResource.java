@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.devsuperior.dscatalog.dtos.CategoryDTO;
-import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.services.CategoryService;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
