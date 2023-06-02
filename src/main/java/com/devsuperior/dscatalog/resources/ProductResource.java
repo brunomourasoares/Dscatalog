@@ -22,6 +22,8 @@ import com.devsuperior.dscatalog.dtos.ProductDTO;
 import com.devsuperior.dscatalog.services.ProductService;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/products")
 public class ProductResource {
@@ -48,7 +50,7 @@ public class ProductResource {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> insertProduct(@RequestBody ProductDTO dto) {
+    public ResponseEntity<ProductDTO> insertProduct(@Valid @RequestBody ProductDTO dto) {
         dto = productService.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}").buildAndExpand(dto.getId()).toUri();
@@ -56,7 +58,7 @@ public class ProductResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO dto) {
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO dto) {
         dto = productService.update(id, dto);
         return ResponseEntity.ok().body(dto);
     }
