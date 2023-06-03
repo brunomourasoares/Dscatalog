@@ -16,7 +16,7 @@ public class UserDTO implements Serializable {
     @NotBlank(message = "Campo obrigatório")
     private String firstName;
     private String lastName;
-    @Email(message = "Favor entrar com email valido")
+    @Email(message = "Favor entrar com email válido")
     private String email;
 
     Set<RoleDTO> roles = new HashSet<>();

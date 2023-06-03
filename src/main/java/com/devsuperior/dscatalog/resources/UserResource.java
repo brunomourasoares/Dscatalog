@@ -18,50 +18,47 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.devsuperior.dscatalog.dtos.UserDTO;
 import com.devsuperior.dscatalog.dtos.UserInsertDTO;
+import com.devsuperior.dscatalog.dtos.UserUpdateDTO;
 import com.devsuperior.dscatalog.services.UserService;
-import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/users")
 public class UserResource {
-    
-    @Autowired
-    private UserService userService;
 
+	@Autowired
+	private UserService userService;
+	
 	@GetMapping
 	public ResponseEntity<Page<UserDTO>> findAll(Pageable pageable) {
 		Page<UserDTO> list = userService.findAllPaged(pageable);		
 		return ResponseEntity.ok().body(list);
 	}
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
-        UserDTO dto = userService.findById(id);
-        return ResponseEntity.ok().body(dto);
-    }
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+		UserDTO dto = userService.findById(id);
+		return ResponseEntity.ok().body(dto);
+	}
+	
+	@PostMapping
+	public ResponseEntity<UserDTO> insert(@RequestBody @Valid UserInsertDTO dto) {
+		UserDTO newDto = userService.insert(dto);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+				.buildAndExpand(newDto.getId()).toUri();
+		return ResponseEntity.created(uri).body(newDto);
+	}
 
-    @PostMapping
-    public ResponseEntity<UserDTO> insertUser(@Valid @RequestBody UserInsertDTO dto) {
-        UserDTO newDto = userService.insert(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-            .path("/{id}").buildAndExpand(newDto.getId()).toUri();
-        return ResponseEntity.created(uri).body(newDto);
-    }
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO dto) {
+		UserDTO newDto = userService.update(id, dto);
+		return ResponseEntity.ok().body(newDto);
+	}
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO dto) {
-        dto = userService.update(id, dto);
-        return ResponseEntity.ok().body(dto);
-    }
-
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        if (!userService.LocateById(id)) {
-            throw new ResourceNotFoundException("Id " + id + " not found!");
-        }
-        userService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-}
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		userService.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+} 
