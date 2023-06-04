@@ -22,7 +22,7 @@ import com.devsuperior.dscatalog.dtos.ProductDTO;
 import com.devsuperior.dscatalog.services.ProductService;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/products")
